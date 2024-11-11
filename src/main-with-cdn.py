@@ -62,11 +62,11 @@ def extract_data_from_image_with_openai(image_path, grade):
     return response.choices[0].message.content.strip()
 
 # Process all images in the specified range for the grade level
-all_data = []
+level_all_data = []
 range_start, range_end = fileNumberRange.get(grade, [0, 0])
 print(f'range_start {range_start} / range_end {range_end}')
 
-for i in range(range_start, range_end + 1):
+for i in range(range_start, range_end + 1):    
     image_url = f"{image_url_dir}/{i}.jpg"
     print(f"Processing image: {image_url}")
 
@@ -79,6 +79,7 @@ for i in range(range_start, range_end + 1):
     print(f'structured_data {structured_data}')
 
     # Step 3: Parse the structured data into rows for CSV
+    data_per_image = []
     for row in structured_data.splitlines():
         row_data = row.split(',')
         
@@ -97,22 +98,24 @@ for i in range(range_start, range_end + 1):
               "options": f"{','.join(row_data[4].split('||'))}"
           }
 
-          all_data.append(appendedData)
+          data_per_image.append(appendedData)
+          level_all_data.append(appendedData)
+          
         except:
           print(f'[ERROR] faild for sentence {row_data}')
 
-        output_csv = f'{output_csv_dir}/{grade}.csv'
+    output_csv = f'{output_csv_dir}/G{grade}_{i}.csv'
 
-        # Convert all data to a DataFrame and save it to CSV
-        df = pd.DataFrame([appendedData])
-        df.to_csv(output_csv, index=False)
+    # 이미지 단위 데이터 저장
+    df = pd.DataFrame(data_per_image)
+    df.to_csv(output_csv, index=False)
 
     print(f"Data extracted and saved to {output_csv}")      
 
 
 # Convert all data to a DataFrame and save it to a total CSV
 total_output_csv = f'{output_csv_dir}/{levelName}_total.csv'
-df = pd.DataFrame(all_data)
+df = pd.DataFrame(level_all_data)
 df.to_csv(total_output_csv, index=False)
 
 print(f"Data extracted and saved to {total_output_csv}")
