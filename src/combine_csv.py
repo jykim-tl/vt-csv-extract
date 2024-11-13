@@ -2,16 +2,28 @@ import os
 import pandas as pd
 
 # Folder containing CSV files
-levelName = 'G3'
+grade = 7
+levelName = f'G{grade}'
+
 csv_folder = f'csv/{levelName}'
 
 # List to store DataFrames
 dataframes = []
 
+fileNumberRange = {
+   3: [2, 63],
+   4: [2, 105],
+   5: [3, 107],
+   6: [3, 97],
+   7: [3, 101]
+}
+
+range_start, range_end = fileNumberRange.get(grade, [0, 0])
+
 # Read each CSV file in the folder
-for filename in os.listdir(csv_folder):
-    if filename.endswith('.csv'):
-        file_path = os.path.join(csv_folder, filename)
+for i in range(range_start, range_end + 1):
+    file_path = f'{csv_folder}/G{grade}_{i}.csv'
+    if file_path.endswith('.csv'):
         df = pd.read_csv(file_path)
         dataframes.append(df)
 
@@ -19,6 +31,7 @@ for filename in os.listdir(csv_folder):
 combined_df = pd.concat(dataframes, ignore_index=True)
 
 # Save the combined DataFrame to a new CSV file
-combined_df.to_csv('combined_output.csv', index=False)
+out_path = f'csv/{levelName}/{levelName}_total_output.csv'
+combined_df.to_csv(out_path, index=False)
 
-print("CSV files combined successfully into 'combined_output.csv'")
+print(f"CSV files combined successfully into {out_path}")

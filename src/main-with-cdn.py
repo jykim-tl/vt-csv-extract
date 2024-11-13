@@ -9,7 +9,7 @@ API_KEY = os.environ['apiKey']
 client = OpenAI(api_key=API_KEY)
 
 # Set the grade level
-grade = 3
+grade = 7
 levelName = f'G{grade}'
 image_url_dir = f'https://cdn.topialive.co.kr/prep-daily-test/returnee/images/{levelName}'
 output_csv_dir = f'csv/{levelName}'
@@ -17,9 +17,11 @@ output_csv_dir = f'csv/{levelName}'
 # Grade-based file number ranges
 fileNumberRange = {
    3: [2, 63],
+  #  3: [25, 63],
    4: [2, 105],
    5: [3, 107],
    6: [3, 97],
+  #  6: [94,97],
    7: [3, 101]
 }
 
@@ -30,7 +32,7 @@ os.makedirs(output_csv_dir, exist_ok=True)
 def extract_data_from_image_with_openai(image_path, grade):
     prompt = f"""Extract the following details from the provided image:
     
-    - typeOfTestAndNumber: Located at the top of the page and will be either "Level Test N" or "Cumulative Test N." N stands for the number stated at the image. not literally "N".
+    - typeOfTestAndNumber: Located at the top of the page and will be either "Lesson Test N" or "Cumulative Test N." N stands for the number stated at the image. not literally "N".
     - pageNum: Numeric value located at the bottom of the page near the text "Wordly Wise 3000 Test Booklet {grade}" indicating the page of the image
     - sequence: Number value of the numbered sentences.
     - questionText: This refers to the numbered sentences in the test.
